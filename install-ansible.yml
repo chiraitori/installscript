@@ -17,6 +17,14 @@
          ansible_env.HOME ~ '/.profile')) }}
 
   tasks:
+    - name: Install lib32z1 (32-bit compatibility library)
+      ansible.builtin.apt:
+        name: lib32z1
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+      become: true
+
     - name: Create temporary archive file
       ansible.builtin.tempfile:
         state: file
