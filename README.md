@@ -8,6 +8,14 @@ Install FriendlyARM `arm-linux-gcc` toolchain with one command.
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/chiraitori/installscript/main/install.sh)"
 ```
 
+Or download first, review, then run:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/chiraitori/installscript/main/install.sh -o install.sh
+less install.sh
+bash install.sh
+```
+
 ## What it does
 
 - Downloads the toolchain archive
@@ -17,6 +25,8 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/chiraitori/installscript
 ## After install
 
 ```bash
+# Source the rc file used by your shell, or open a new terminal session.
+# Example for bash:
 source ~/.bashrc
 arm-linux-gcc --version
 ```
