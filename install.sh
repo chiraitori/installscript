@@ -124,7 +124,10 @@ main() {
   local path_entry
 
   echo "Installing required package: lib32z1 (32-bit compatibility library)"
-  run_as_root apt-get update
+  if ! run_as_root apt-get update; then
+    echo "Error: failed to update apt package index." >&2
+    exit 1
+  fi
   if ! run_as_root apt-get install -y lib32z1; then
     echo "Error: failed to install required package lib32z1." >&2
     exit 1
