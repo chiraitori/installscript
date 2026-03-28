@@ -15,6 +15,7 @@ bash install.sh
 Optional one-line install:
 
 ```bash
+# Use only if you trust the script source.
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/chiraitori/installscript/main/install.sh)"
 ```
 
@@ -27,8 +28,9 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/chiraitori/installscript
 ## After install
 
 ```bash
-# Source the rc file used by your shell, or open a new terminal session.
-# Example for bash:
-source ~/.bashrc
+# Source the rc file used by your shell, or open a new terminal session:
+# bash: source ~/.bashrc
+# zsh:  source ~/.zshrc
+# other shells: source ~/.profile
 arm-linux-gcc --version
 ```
