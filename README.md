@@ -7,7 +7,7 @@ Install FriendlyARM `arm-linux-gcc` toolchain with Ansible (or optional shell sc
 Run locally:
 
 ```bash
-ansible-playbook /home/runner/work/installscript/installscript/install-ansible.yml --ask-become-pass
+ansible-playbook ./install-ansible.yml --ask-become-pass
 ```
 
 Or run online via curl without using `install.sh`:
