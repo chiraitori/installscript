@@ -17,7 +17,7 @@
          ansible_env.HOME ~ '/.profile')) }}
 
   tasks:
-    - name: Install required package lib32z1
+    - name: Install lib32z1 (32-bit compatibility library)
       ansible.builtin.apt:
         name: lib32z1
         state: present
