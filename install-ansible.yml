@@ -63,16 +63,12 @@
         mode: "0755"
       become: true
 
-    - name: Move extracted FriendlyARM tree into /opt
-      ansible.builtin.command:
-        cmd: mv "{{ extract_tmp.path }}/opt/FriendlyARM" "{{ install_root }}"
+    - name: Copy extracted FriendlyARM tree into /opt
+      ansible.builtin.copy:
+        src: "{{ extract_tmp.path }}/opt/FriendlyARM/"
+        dest: "{{ install_root }}/"
+        remote_src: true
       become: true
-
-    - name: Ensure shell rc file exists
-      ansible.builtin.file:
-        path: "{{ rc_file }}"
-        state: touch
-        mode: "0644"
 
     - name: Add toolchain PATH block
       ansible.builtin.blockinfile:
