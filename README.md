@@ -27,6 +27,7 @@ bash install.sh
 
 ## What it does
 
+- Installs required package: `lib32z1`
 - Downloads the toolchain archive
 - Installs it under `/opt/FriendlyARM/...`
 - Adds the toolchain `bin` path to your shell rc file (`~/.bashrc`, `~/.zshrc`, or `~/.profile`)
