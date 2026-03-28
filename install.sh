@@ -123,6 +123,9 @@ main() {
   local rc_file
   local path_entry
 
+  echo "Installing required package: lib32z1"
+  run_as_root apt-get install -y lib32z1
+
   TMP_DIR="$(mktemp -d)"
   trap cleanup EXIT
 
