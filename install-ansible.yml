@@ -1,0 +1,98 @@
+---
+- name: Install FriendlyARM arm-linux-gcc toolchain
+  hosts: localhost
+  connection: local
+  gather_facts: true
+
+  vars:
+    toolchain_url: "https://github.com/friendlyarm/prebuilts/raw/refs/heads/master/gcc/arm-linux-gcc-4.5.1-v6-vfp.tar.xz"
+    expected_rel_bin: "FriendlyARM/toolschain/4.5.1/bin"
+    install_base: "/opt"
+    install_root: "/opt/FriendlyARM"
+    path_entry: "/opt/FriendlyARM/toolschain/4.5.1/bin"
+    shell_name: "{{ ansible_env.SHELL | default('/bin/bash') | basename }}"
+    rc_file: >-
+      {{ (shell_name == 'zsh') | ternary(ansible_env.HOME ~ '/.zshrc',
+         (shell_name == 'bash') | ternary(ansible_env.HOME ~ '/.bashrc',
+         ansible_env.HOME ~ '/.profile')) }}
+
+  tasks:
+    - name: Create temporary archive file
+      ansible.builtin.tempfile:
+        state: file
+        suffix: ".tar.xz"
+      register: archive_tmp
+
+    - name: Create temporary extraction directory
+      ansible.builtin.tempfile:
+        state: directory
+      register: extract_tmp
+
+    - name: Download toolchain archive
+      ansible.builtin.get_url:
+        url: "{{ toolchain_url }}"
+        dest: "{{ archive_tmp.path }}"
+        mode: "0644"
+
+    - name: Extract toolchain archive
+      ansible.builtin.unarchive:
+        src: "{{ archive_tmp.path }}"
+        dest: "{{ extract_tmp.path }}"
+        remote_src: true
+
+    - name: Check expected extracted layout
+      ansible.builtin.stat:
+        path: "{{ extract_tmp.path }}/opt/{{ expected_rel_bin }}"
+      register: expected_layout
+
+    - name: Fail if expected toolchain layout is missing
+      ansible.builtin.fail:
+        msg: "Expected extracted directory {{ extract_tmp.path }}/opt/{{ expected_rel_bin }} was not found."
+      when: not expected_layout.stat.exists
+
+    - name: Remove previous FriendlyARM install
+      ansible.builtin.file:
+        path: "{{ install_root }}"
+        state: absent
+      become: true
+
+    - name: Ensure install base exists
+      ansible.builtin.file:
+        path: "{{ install_base }}"
+        state: directory
+        mode: "0755"
+      become: true
+
+    - name: Copy extracted FriendlyARM tree into /opt
+      ansible.builtin.copy:
+        src: "{{ extract_tmp.path }}/opt/FriendlyARM/"
+        dest: "{{ install_root }}/"
+        remote_src: true
+      become: true
+
+    - name: Add toolchain PATH block
+      ansible.builtin.blockinfile:
+        path: "{{ rc_file }}"
+        marker: "# {mark} arm-linux-gcc toolchain"
+        create: true
+        block: |
+          export PATH="{{ path_entry }}:$PATH"
+
+    - name: Remove temporary archive file
+      ansible.builtin.file:
+        path: "{{ archive_tmp.path }}"
+        state: absent
+
+    - name: Remove temporary extraction directory
+      ansible.builtin.file:
+        path: "{{ extract_tmp.path }}"
+        state: absent
+
+    - name: Show completion message
+      ansible.builtin.debug:
+        msg:
+          - "Install completed."
+          - "Toolchain location: {{ install_root }}/toolschain/4.5.1"
+          - "PATH entry added to: {{ rc_file }}"
+          - "Apply now with: source {{ rc_file }}"
+          - "Check compiler with: arm-linux-gcc --version"
